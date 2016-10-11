@@ -883,17 +883,7 @@ public class TagGroup extends ViewGroup {
 
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-
-                        //workaround for keyboards that don't work well with the enter key event
-                        if (s.toString().contains("\n")) {
-
-
-                            setText(s.toString().replace("\n", ""));
-
+                        if(s.charAt(s.length()-2)=='/' && s.charAt(s.length()-1)=='n'){
                             if (isInputAvailable()) {
                                 // If the input content is available, end the input and dispatch
                                 // the event, then append a new INPUT state tag.
@@ -907,8 +897,11 @@ public class TagGroup extends ViewGroup {
                                     appendInputTag();
                                 }
                             }
-
                         }
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
                     }
                 });
             }
