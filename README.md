@@ -75,7 +75,7 @@ Use `setTags(...)` to set the initial tags in the group.
 
 To "submit" a new tag as user press "Enter" or tap the blank area of the tag group, also you can "submit" a new tag via `submitTag()`.
 
-**This issues has been fixed in v1.6.0**
+**This issue has been fixed in v1.6.0**
 
 ~~**Note**: Google keyboard (a few soft keyboard not honour the key event) currently not supported "Enter" key to "submit" a new tag.~~
 
