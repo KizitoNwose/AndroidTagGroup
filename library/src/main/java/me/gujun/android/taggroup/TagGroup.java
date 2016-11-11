@@ -13,9 +13,14 @@ import android.graphics.RectF;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.ArrowKeyMovementMethod;
+import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -26,6 +31,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputConnectionWrapper;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -164,6 +170,11 @@ public class TagGroup extends ViewGroup {
     private int verticalPadding;
 
     /**
+     * Tags that will be suggested while typing
+     */
+    private List<String> autoCompleteTags;
+
+    /**
      * Listener used to dispatch tag change event.
      */
     private OnTagChangeListener mOnTagChangeListener;
@@ -233,6 +244,10 @@ public class TagGroup extends ViewGroup {
                 }
             });
         }
+    }
+
+    public void setAutoCompleteTags(List<String> autoCompleteTags){
+        this.autoCompleteTags = autoCompleteTags;
     }
 
     /**
@@ -698,7 +713,7 @@ public class TagGroup extends ViewGroup {
     /**
      * The tag view which has two states can be either NORMAL or INPUT.
      */
-    class TagView extends TextView {
+    class TagView extends EditText {
         public static final int STATE_NORMAL = 1;
         public static final int STATE_INPUT = 2;
 
@@ -716,6 +731,21 @@ public class TagGroup extends ViewGroup {
          * The current state.
          */
         private int mState;
+
+        /**
+         * The actual text inside the TagView
+         */
+        private String actualText;
+
+        /**
+         * Indicates if the call to the TextWatcher was made by the user or the code
+         */
+        private boolean justEdited;
+
+        /**
+         * Indicates if the hint was dismissed by the user
+         */
+        private boolean deleteHint;
 
         /**
          * Indicates the tag if checked.
@@ -782,8 +812,7 @@ public class TagGroup extends ViewGroup {
             mCheckedMarkerPaint.setColor(checkedMarkerColor);
         }
 
-
-        public TagView(final Context context, final int state, CharSequence text) {
+        public TagView(final Context context, final int state, final CharSequence text) {
             super(context);
             setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding);
             setLayoutParams(new TagGroup.LayoutParams(
@@ -795,6 +824,9 @@ public class TagGroup extends ViewGroup {
             setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
 
             mState = state;
+            actualText = "";
+            justEdited = false;
+            deleteHint = false;
 
             setClickable(isAppendMode);
             setFocusable(state == STATE_INPUT);
@@ -870,6 +902,31 @@ public class TagGroup extends ViewGroup {
                     }
                 });
 
+                // Updates actualText when autocomplete is enabled
+                InputFilter inputFilter = new InputFilter() {
+                    @Override
+                    public CharSequence filter(CharSequence charSequence, int i, int i1, Spanned spanned, int i2, int i3) {
+                        if(autoCompleteTags!=null&&!justEdited){
+                            String newText = charSequence.toString();
+                            String oldText = spanned.toString();
+                            if(actualText.isEmpty()){
+                                actualText = newText;
+                            } else if(getSelectionStart()<=actualText.length()){
+                                actualText = actualText.substring(0,i2) + newText +  actualText.substring(i3,actualText.length());
+                            } else {
+                                if(newText.isEmpty()||((i3-i2)==oldText.length())){
+                                    deleteHint = true;
+                                } else{
+                                    actualText = oldText.substring(0,i2) + newText +  oldText.substring(i3,oldText.length());
+                                }
+                            }
+                        }
+                        return charSequence;
+                    }
+                };
+
+                setFilters(new InputFilter[]{inputFilter});
+
                 // Handle the INPUT tag content changed.
                 addTextChangedListener(new TextWatcher() {
                     @Override
@@ -887,10 +944,46 @@ public class TagGroup extends ViewGroup {
 
                     @Override
                     public void afterTextChanged(Editable s) {
-                        //workaround for keyboards that don't work well with the enter key event
-                        if (s.toString().contains("\n")) {
-                            setText(s.toString().replace("\n", ""));
+                        // Workaround for keyboards that don't work well with the enter key event
+                        String newText = s.toString();
+                        if (newText.contains("\n")) {
+                            justEdited = true;
+                            setText(newText.replace("\n", ""));
                             submitTag();
+                            return;
+                        }
+                        // Avoids recursive calls from within TextWatcher
+                        if(justEdited){
+                            justEdited = false;
+                        } else if(autoCompleteTags!=null){
+                            // Autocomplete functionality
+                            if(actualText.isEmpty()){
+                                justEdited = true;
+                                setText(actualText);
+                                return;
+                            } else{
+                                int pointer = getSelectionStart();
+                                justEdited = true;
+                                if(deleteHint){
+                                    deleteHint = false;
+                                    setText(actualText);
+                                    setSelection(actualText.length());
+                                    return;
+                                }
+                                for(String autoTag:autoCompleteTags){
+                                    if(autoTag.length()>actualText.length()){
+                                        if(autoTag.substring(0,actualText.length()).equals(actualText)){
+                                            Spannable spannable = new SpannableString(autoTag);
+                                            spannable.setSpan(new ForegroundColorSpan(Color.GRAY), actualText.length(), autoTag.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                            setText(spannable);
+                                            setSelection(pointer);
+                                            return;
+                                        }
+                                    }
+                                }
+                                setText(actualText);
+                                setSelection(pointer);
+                            }
                         }
                     }
                 });
