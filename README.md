@@ -36,7 +36,7 @@ allprojects {
 
 ```gradle
 dependencies {
-	compile 'com.github.kizitonwose:AndroidTagGroup:1.6.0'
+	compile 'com.github.Eddydpyl:AndroidTagGroup:1.6.1'
 }
 ```
 
@@ -50,9 +50,9 @@ dependencies {
 </repository>
 
 <dependency>
-	    <groupId>com.github.kizitonwose</groupId>
+	    <groupId>com.github.Eddydpyl</groupId>
 	    <artifactId>AndroidTagGroup</artifactId>
-	    <version>1.6.0</version>
+	    <version>1.6.1</version>
 </dependency>
 ```
 
@@ -87,12 +87,13 @@ To delete a tag as user press "Backspace" key or double-tap the tag which you wa
 
 Implement a callback interface: `TagGroup.OnTagClickListener`, and set the listener via `setOnTagClickListener()`.
 
-#### Important changes in v1.6.0
+#### How to use autocomplete?
 
-- `void onAppend()` in `onTagChangedListener` is now `boolean onAppend()` This is useful if you want to check if a new tag is valid before adding to the list of tags. For instance, in a TagGroup of links, you may want to ensure that new tags are valid links, this is the right place do so. If you are not interested in validating your tags, you can just return `true`.
+Set the list of Strings you want to have as suggestions via `setAutoCompleteTags()`.
 
-- Fixed issue where tag is not submitted with enter key on some keyboards.
+#### Important changes in v1.6.1
 
+- You can now use an autocomplete functionality that gives suggestions inside the TagView
 
 # Build
 
