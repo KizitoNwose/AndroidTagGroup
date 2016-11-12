@@ -1,12 +1,12 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
-group='com.github.KizitoNwose'
+group='com.github.Eddydpyl'
 android {
     compileSdkVersion 23
     buildToolsVersion '24.0.2'
     defaultConfig {
-        minSdkVersion 8
+        minSdkVersion 9
         targetSdkVersion 23
     }
     lintOptions {
