@@ -75,9 +75,7 @@ Use `setTags(...)` to set the initial tags in the group.
 
 To "submit" a new tag as user press "Enter" or tap the blank area of the tag group, also you can "submit" a new tag via `submitTag()`.
 
-**This issue has been fixed in v1.6.0**
-
-~~**Note**: Google keyboard (a few soft keyboard not honour the key event) currently not supported "Enter" key to "submit" a new tag.~~
+~~**Note**: Google keyboard (a few soft keyboard not honour the key event) currently not supported "Enter" key to "submit" a new tag.~~ **This issue has been fixed in v1.6.0**
 
 #### How to delete a tag?
 
@@ -89,7 +87,7 @@ Implement a callback interface: `TagGroup.OnTagClickListener`, and set the liste
 
 #### Important changes in v1.7.0
 
-- The new setAutoCompleteTags() method takes a List of Strings as input parameter and makes all of the TagViews belonging to the TagGroup display those as hints while typing.
+- The new setAutoCompleteTags() method takes a List of Strings as input parameter and makes all of the TagViews belonging to the TagGroup display one of those at a time as a hint while being typed in.
 
 # Build
 
