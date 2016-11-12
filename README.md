@@ -1,6 +1,6 @@
 # `AndroidTagGroup`
 
-[![Release](https://jitpack.io/v/KizitoNwose/AndroidTagGroup.svg)](https://jitpack.io/#KizitoNwose/AndroidTagGroup)
+[![Release](https://jitpack.io/v/Eddydpyl/AndroidTagGroup.svg)](https://jitpack.io/#Eddydpyl/AndroidTagGroup)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-AndroidTagGroup-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1539)
 
 The TagGroup is a special layout with a set of tags. You can use it to tag people, books or anything you want.
