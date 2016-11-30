@@ -35,6 +35,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -175,6 +176,11 @@ public class TagGroup extends ViewGroup {
     private List<String> autoCompleteTags;
 
     /**
+     * Whether submitting a tagView that is already in the TagGroup is allowed or not
+     */
+    private boolean allowRepeats = true;
+
+    /**
      * Listener used to dispatch tag change event.
      */
     private OnTagChangeListener mOnTagChangeListener;
@@ -250,12 +256,30 @@ public class TagGroup extends ViewGroup {
         this.autoCompleteTags = autoCompleteTags;
     }
 
+    public void setAutoCompleteTags(String... autoCompleteTags){
+        this.autoCompleteTags = new ArrayList<>(Arrays.asList(autoCompleteTags));
+    }
+
+    public void setAllowRepeats(boolean allowRepeats){
+        this.allowRepeats = allowRepeats;
+    }
+
     /**
      * Call this to submit the INPUT tag.
      */
     public void submitTag() {
         final TagView inputTag = getInputTag();
         if (inputTag != null && inputTag.isInputAvailable()) {
+            if(!allowRepeats){
+                String text = inputTag.getText().toString();
+                if(Arrays.asList(getTags()).contains(text)){
+                    inputTag.justEdited = true;
+                    inputTag.actualText = text.replaceAll("[\\t\\n\\r]","");
+                    inputTag.setText(inputTag.actualText);
+                    inputTag.setSelection(text.length());
+                    return;
+                }
+            }
             if (mOnTagChangeListener != null) {
                 if (mOnTagChangeListener.onAppend(TagGroup.this, inputTag.getText().toString())) {
                     inputTag.endInput();
@@ -265,7 +289,6 @@ public class TagGroup extends ViewGroup {
                 inputTag.endInput();
                 appendInputTag();
             }
-
         }
     }
 
@@ -849,27 +872,44 @@ public class TagGroup extends ViewGroup {
                 setOnEditorActionListener(new OnEditorActionListener() {
                     @Override
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                        if (actionId == EditorInfo.IME_NULL
-                                && (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER
-                                && event.getAction() == KeyEvent.ACTION_DOWN)) {
-                            if (isInputAvailable()) {
-                                // If the input content is available, end the input and dispatch
-                                // the event, then append a new INPUT state tag.
-
-                                if (mOnTagChangeListener != null) {
-                                    if (mOnTagChangeListener.onAppend(TagGroup.this, getText().toString())) {
-                                        endInput();
-                                        appendInputTag();
-                                    }
-                                } else {
-                                    endInput();
-                                    appendInputTag();
-                                }
-
-                            }
-                            return true;
+                        if (event==null) {
+                            if (actionId==EditorInfo.IME_ACTION_DONE);
+                                // Capture soft enters in a singleLine EditText that is the last EditText.
+                            else if (actionId==EditorInfo.IME_ACTION_NEXT);
+                                // Capture soft enters in other singleLine EditTexts
+                            else return false;  // Let system handle all other null KeyEvents
                         }
-                        return false;
+                        else if (actionId==EditorInfo.IME_NULL) {
+                            // Capture most soft enters in multi-line EditTexts and all hard enters.
+                            // They supply a zero actionId and a valid KeyEvent rather than
+                            // a non-zero actionId and a null event like the previous cases.
+                            if (event.getAction()==KeyEvent.ACTION_DOWN);
+                                // We capture the event when key is first pressed.
+                            else return true;   // We consume the event when the key is released.
+                        }
+                        else return false;
+                        // We let the system handle it when the listener
+                        // is triggered by something that wasn't an enter.
+
+
+                        // Code from this point on will execute whenever the user
+                        // presses enter in an attached view, regardless of position,
+                        // keyboard, or singleLine status.
+
+                        if (isInputAvailable()) {
+                            // If the input content is available, end the input and dispatch
+                            // the event, then append a new INPUT state tag.
+
+                            if (mOnTagChangeListener != null) {
+                                if (mOnTagChangeListener.onAppend(TagGroup.this, getText().toString())) {
+                                    submitTag();
+                                }
+                            } else {
+                                submitTag();
+                            }
+
+                        }
+                        return true;   // Consume the event
                     }
                 });
 
@@ -939,16 +979,15 @@ public class TagGroup extends ViewGroup {
                     }
 
                     @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    }
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
                     @Override
                     public void afterTextChanged(Editable s) {
                         // Workaround for keyboards that don't work well with the enter key event
                         String newText = s.toString();
-                        if (newText.contains("\n")) {
+                        if (newText.contains("\n")||newText.contains("\r")||newText.contains("\t")) {
                             justEdited = true;
-                            setText(newText.replace("\n", ""));
+                            setText(newText.replaceAll("[\\t\\n\\r]",""));
                             submitTag();
                             return;
                         }
@@ -988,7 +1027,6 @@ public class TagGroup extends ViewGroup {
                     }
                 });
             }
-
             invalidatePaint();
         }
 

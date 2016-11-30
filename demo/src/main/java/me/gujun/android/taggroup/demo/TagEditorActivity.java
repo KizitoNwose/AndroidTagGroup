@@ -23,6 +23,8 @@ public class TagEditorActivity extends ActionBarActivity {
 
         mTagGroup = (TagGroup) findViewById(R.id.tag_group);
         mTagGroup.setTags(tags);
+        mTagGroup.setAutoCompleteTags(tags);
+        mTagGroup.setAllowRepeats(false);
     }
 
     @Override
