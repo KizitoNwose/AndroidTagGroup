@@ -1,6 +1,6 @@
 # `AndroidTagGroup`
 
-[![Release](https://jitpack.io/v/KizitoNwose/AndroidTagGroup.svg)](https://jitpack.io/#KizitoNwose/AndroidTagGroup)
+[![Release](https://jitpack.io/v/Eddydpyl/AndroidTagGroup.svg)](https://jitpack.io/#Eddydpyl/AndroidTagGroup)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-AndroidTagGroup-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1539)
 
 The TagGroup is a special layout with a set of tags. You can use it to tag people, books or anything you want.
@@ -36,7 +36,7 @@ allprojects {
 
 ```gradle
 dependencies {
-	compile 'com.github.kizitonwose:AndroidTagGroup:1.6.0'
+	compile 'com.github.Eddydpyl:AndroidTagGroup:1.7.1'
 }
 ```
 
@@ -50,9 +50,9 @@ dependencies {
 </repository>
 
 <dependency>
-	    <groupId>com.github.kizitonwose</groupId>
+	    <groupId>com.github.Eddydpyl</groupId>
 	    <artifactId>AndroidTagGroup</artifactId>
-	    <version>1.6.0</version>
+	    <version>1.7.1</version>
 </dependency>
 ```
 
@@ -75,9 +75,7 @@ Use `setTags(...)` to set the initial tags in the group.
 
 To "submit" a new tag as user press "Enter" or tap the blank area of the tag group, also you can "submit" a new tag via `submitTag()`.
 
-**This issues has been fixed in v1.6.0**
-
-~~**Note**: Google keyboard (a few soft keyboard not honour the key event) currently not supported "Enter" key to "submit" a new tag.~~
+~~**Note**: Google keyboard (a few soft keyboard not honour the key event) currently not supported "Enter" key to "submit" a new tag.~~ **This issue has been fixed in v1.6.0**
 
 #### How to delete a tag?
 
@@ -87,12 +85,13 @@ To delete a tag as user press "Backspace" key or double-tap the tag which you wa
 
 Implement a callback interface: `TagGroup.OnTagClickListener`, and set the listener via `setOnTagClickListener()`.
 
-#### Important changes in v1.6.0
+#### How to use autocomplete?
 
-- `void onAppend()` in `onTagChangedListener` is now `boolean onAppend()` This is useful if you want to check if a new tag is valid before adding to the list of tags. For instance, in a TagGroup of links, you may want to ensure that new tags are valid links, this is the right place do so. If you are not interested in validating your tags, you can just return `true`.
+Use `setAutoCompleteTags()` on the target TagGroup and pass as input parameter the tags you want to use for this purpose.
 
-- Fixed issue where tag is not submitted with enter key on some keyboards.
+#### Important changes in v1.7.1
 
+- The new setAllowRepeats() method takes a boolean as input parameter and sets wether or not the user is allowed to submit a new tag when its text is the exact same as the one in any other of the tags in the TagGroup.
 
 # Build
 
