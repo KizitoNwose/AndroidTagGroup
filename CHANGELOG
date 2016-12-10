@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 1.7.1 *(2016-12-10)*
+----------------------------
+
+-New Allow Repeats functionality, use setAllowRepeats().
+
 Version 1.7.0 *(2016-11-12)*
 ----------------------------
 
