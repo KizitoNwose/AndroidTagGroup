@@ -36,7 +36,7 @@ allprojects {
 
 ```gradle
 dependencies {
-	compile 'com.github.Eddydpyl:AndroidTagGroup:1.7.0'
+	compile 'com.github.Eddydpyl:AndroidTagGroup:1.7.1'
 }
 ```
 
@@ -52,7 +52,7 @@ dependencies {
 <dependency>
 	    <groupId>com.github.Eddydpyl</groupId>
 	    <artifactId>AndroidTagGroup</artifactId>
-	    <version>1.7.0</version>
+	    <version>1.7.1</version>
 </dependency>
 ```
 
@@ -85,9 +85,13 @@ To delete a tag as user press "Backspace" key or double-tap the tag which you wa
 
 Implement a callback interface: `TagGroup.OnTagClickListener`, and set the listener via `setOnTagClickListener()`.
 
-#### Important changes in v1.7.0
+#### How to use autocomplete?
 
-- The new setAutoCompleteTags() method takes a List of Strings as input parameter and makes all of the TagViews belonging to the TagGroup display one of those at a time as a hint while being typed in.
+Use `setAutoCompleteTags()`on the target TagGroup and pass as input parameter the tags you want to use for this purpose.
+
+#### Important changes in v1.7.1
+
+- The new setAllowRepeats() method takes a boolean as input parameter and sets wether or not the user is allowed to submit a new tag when its text is the exact same as the one in any other of the tags in the TagView.
 
 # Build
 
