@@ -87,11 +87,11 @@ Implement a callback interface: `TagGroup.OnTagClickListener`, and set the liste
 
 #### How to use autocomplete?
 
-Use `setAutoCompleteTags()`on the target TagGroup and pass as input parameter the tags you want to use for this purpose.
+Use `setAutoCompleteTags()` on the target TagGroup and pass as input parameter the tags you want to use for this purpose.
 
 #### Important changes in v1.7.1
 
-- The new setAllowRepeats() method takes a boolean as input parameter and sets wether or not the user is allowed to submit a new tag when its text is the exact same as the one in any other of the tags in the TagView.
+- The new setAllowRepeats() method takes a boolean as input parameter and sets wether or not the user is allowed to submit a new tag when its text is the exact same as the one in any other of the tags in the TagGroup.
 
 # Build
 
